@@ -1,8 +1,18 @@
 var request = require('request');
+var parser = require('xml2js').Parser();
 
+// your azure translator text API key
 var azureClientSecret = '';
-var category =  'c3608a00-9933-4e6c-b0b8-3aea47aa1262_ARTSENT';
+
+// default category
+//var category =  'general';
+
+// your category id from a deployed translator hub project
+var category =  '';
+
+// Text to be translated
 var text = 'Ceci est un test';
+
 var ilang = 'fr';
 var olang = 'es';
 
@@ -19,8 +29,13 @@ request.post(
         if (!error && response.statusCode == 200) {
 
             var accessToken = body;
-            var url = 'http://api.microsofttranslator.com/v2/Http.svc/Translate?' + 'text=' +encodeURI(text) + '&from=' + ilang + '&to=' + olang + '&category=' + category;
-            console.log(url);
+
+            var url = 'http://api.microsofttranslator.com/v2/Http.svc/Translate?' +
+                'text=' +encodeURI(text)  +
+                '&contentType=text/html' +
+                '&from=' + ilang +
+                '&to=' + olang +
+                '&category=' + category;
 
             request.get({
                     url: url,
@@ -31,7 +46,10 @@ request.post(
                 },
 
                 function (error, response, body) {
-                console.log(body)
+
+                    parser.parseString(body, function(err, result){
+                        console.log(result.string._);
+                    });
                 }
             );
 
